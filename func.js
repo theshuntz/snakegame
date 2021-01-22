@@ -9,9 +9,10 @@ let appleIndex = 0
 let score = 0
 let intervalTime = 1000
 let speed = 0.9
+let timer = 0
 
 function createGrid() {
-    for (let i = 0; i < width*width; i++) {
+    for (let i = 0; i < width * width; i++) {
         const square = document.createElement('div')
         //created a loop with 100 div inside
         square.classList.add('square')
@@ -26,6 +27,24 @@ createGrid()
 
 currentSnake.forEach(index => squares[index].classList.add('snake'))
 
+function startGame() {
+    //remove the snake
+    currentSnake.forEach(index => squares[index].classList.remove('snake'))
+    //remove the apple
+    squares[appleIndex].classList.remove('apple')
+    clearInterval(timer)
+    currentSnake = [2,1,0]
+    score = 0
+    //re add new score to browser
+    scoreDisplay.textContent = score
+    direction = 1
+    intervalTime = 1000
+    generateApples()
+    //readd the class of snake to our new currentSnake
+    currentSnake.forEach(index => squares[index].classList.add('snake'))
+    timer = setInterval(move, intervalTime)
+}
+
 function move() {
     if (
         (currentSnake[0] + width >= width * width && direction === width) || //if snake has hit bottom
@@ -34,7 +53,7 @@ function move() {
         (currentSnake[0] - width < 0 && direction === -width) || //if snake has hit top
         squares[currentSnake[0] + direction].classList.contains('snake')
     )
-    return clearInterval(timer)
+        return clearInterval(timer)
 
     const tail = currentSnake.pop()
     squares[tail].classList.remove('snake')
@@ -49,7 +68,7 @@ function move() {
         //grow our snake array
         currentSnake.push(tail)
         //generate new apple
-        generateApple()
+        generateApples()
         //add one to the score
         score++
         //display our score
@@ -69,9 +88,7 @@ function move() {
     squares[head].classList.add('snake') 
      */
 }
-move()
 
-let timer = setInterval(move, intervalTime)
 
 function generateApples() {
     do {
@@ -97,3 +114,4 @@ function control(e) {
     }
 }
 document.addEventListener('keyup', control)
+startButton.addEventListener('click', startGame)
